@@ -1,5 +1,5 @@
 {
-  "name": "gulp-summer",
+  "name": "summer-gulp",
   "version": "1.0.0",
   "description": "gulp-summer project",
   "main": "gulpfile.js",
@@ -25,12 +25,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:iuapmobile/gulp-summer.git"
+    "url": "git+ssh://git@github.com/iuapmobile/gulp-summer.git"
   },
   "keywords": [
     "summer",
     "iuapmobile"
   ],
   "author": "GouChengtu",
-  "license": "ISC"
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/iuapmobile/gulp-summer/issues"
+  },
+  "homepage": "https://github.com/iuapmobile/gulp-summer#readme"
 }
