@@ -1,0 +1,12 @@
+extends ../base-layout.jade
+
+block title
+  title 错误提示
+block style
+  link(rel="stylesheet", href="../../static/404/404.css?#{version}")
+block body
+  .container
+    img(src="../../static/img/404.png", alt="")
+    h3= errorMsg
+block script
+  

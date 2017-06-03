@@ -1,0 +1,29 @@
+extends ./base-layout.jade
+
+block title
+  title 首页
+block body
+  .um-win
+    .um-header#header
+      a(href="#").um-back 返回
+      h3 iuapmobile
+      a(href="#").um-header-right.ti-plus.f20
+    #content.um-content.p15
+      p.
+        iuapmobile
+    #footer.um-footer
+      .um-footerbar
+        a(id='item0', href='#', class='um-footerbar-item')
+          i.ti-comments.f20
+          .f12.lh1 消息
+        a(id='item0', href='#', class='um-footerbar-item active')
+          i.ti-notepad.f20
+          .f12.lh1 日程
+        a(id='item0', href='#', class='um-footerbar-item')
+          i.ti-agenda.f20
+          .f12.lh1 通讯录
+        a(id='item0', href='#', class='um-footerbar-item')
+          i.ti-user.f20
+          .f12.lh1 我
+block script
+  script(src='js/index.js')
