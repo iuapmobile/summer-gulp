@@ -29,9 +29,9 @@ var summerready = function summerready() {
 function opencamera() {
     summer.openCamera({
         callback: function callback(args) {
-            console.log(args.imgPath);
-            alert(args.imgPath);
-            summer.execScript({
+            console.log(args.imgPath
+            //alert(args.imgPath);
+            );summer.execScript({
                 frameId: 'main',
                 script: "showPhoto('" + args.imgPath + "')"
             });

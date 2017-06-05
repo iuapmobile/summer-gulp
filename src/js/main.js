@@ -11,6 +11,6 @@ var summerready = function(){
 }
 
 function showPhoto(path){
-	alert(path);
+	//alert(path);
 	$summer.byId("myphoto").src = path; 
 }

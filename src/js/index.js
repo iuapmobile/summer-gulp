@@ -28,7 +28,7 @@ function opencamera(){
     summer.openCamera({
         callback: (args)=>{
             console.log(args.imgPath)
-            alert(args.imgPath);
+            //alert(args.imgPath);
             summer.execScript({
                 frameId:'main',
                 script:"showPhoto('"+args.imgPath+"')"
