@@ -2,7 +2,7 @@ var summerready = function(){
     // here is your code...
     var top = $summer.offset($summer.byId('header')).h;
     var bottom = $summer.offset($summer.byId("footer")).h;
-    alert(1+"ab");
+    //alert(1+"ab");
     for (let i = 0; i < 5; i++) {
       console.log(i);
     }
@@ -11,13 +11,8 @@ var summerready = function(){
     let zoo = {cat, dog}
     console.log(zoo)
 
-    summer.openCamera({
-        callback: (args)=>{
-            console.log(args.imgPath)
-        }
-    })
     summer.openFrame({
-        name: 'main',
+        id: 'main',
         url: 'html/main.html',
         bounces: true,
         position: {
@@ -28,4 +23,16 @@ var summerready = function(){
         }
     });
 }
-//fff
+
+function opencamera(){ 
+    summer.openCamera({
+        callback: (args)=>{
+            console.log(args.imgPath)
+            alert(args.imgPath);
+            summer.execScript({
+                frameId:'main',
+                script:"showPhoto('"+args.imgPath+"')"
+            })
+        }
+    })
+}
