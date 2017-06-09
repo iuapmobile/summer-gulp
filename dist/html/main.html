@@ -4,19 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1, maximum-scale=1, user-scalable=no">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>主页12</title>
+    <title>主页mian</title>
     <link rel="stylesheet" href="../css/font-icons.css">
     <link rel="stylesheet" href="../css/iuapmobile.um.css">
+    <link rel="stylesheet" href="../css/iuapmobile.um.listview.css">
+    <link rel="stylesheet" href="../css/main.css">
   </head>
   <body>
     <div class="um-frame" id="main">
-      <div class="um-content" id="content"><img src="../img/banner0.jpg" style="width:100%;">
-        <div class="p15"><img id="myphoto" src="../img/banner0.jpg" style="width:100%;"></div>
+      <div class="um-content" id="content">
+        <div class="p15 um-listview-adaptation">  
+          <div class="um-listview-wrap" id="listview">
+            <ul class="um-list um-no-active" data-bind="foreach:data"> 
+              <li class="um-listview-row"><a class="um-list-item um-swipe-action um-no-icon" href="#"> 
+                  <div class="um-swipe-btns"><span class="um-swipe-btn um-delete">删除</span></div>
+                  <div class="um-list-item-media msg-info"><img alt="" data-bind="attr:{'src': img}" width="50"><span class="um-badge" data-bind="text:msgNum,visible:msgNum&gt;0"></span></div>
+                  <div class="um-list-item-inner">
+                    <div class="um-list-item-body">
+                      <h4 class="um-media-heading fb f16 um-text-overflow" data-bind="text:sender"></h4>
+                      <p class="um-gray f14 um-text-overflow" data-bind="text:lastMsg"></p>
+                    </div>
+                    <div class="pr10"><span class="um-gray f12" data-bind="text:lastTime"></span></div>
+                  </div></a></li>
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
     <script src="../js/summer.js"></script>
     <script src="../js/jquery.min.js"></script>
     <script src="../js/Frameworks/iuapmobile.frameworks.ui.js"></script>
+    <script src="../js/knockout.js"></script>
+    <script src="../js/Frameworks/iuapmobile.frameworks.listview.js"></script>
     <script src="../js/main.js"></script>
   </body>
 </html>

@@ -450,7 +450,7 @@
 				};
 				_script.onerror = function (e) {
 					summer.__debug = true;
-					console.log("run by http:// protocol in debug Mode");
+					//console.log("run by http:// protocol in debug Mode");
 					summerDOMContentLoaded();
 				};
 				//document.currentScript.parentNode.insertBefore(_script, document.currentScript);

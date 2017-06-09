@@ -2,50 +2,136 @@
  * Summer UI JavaScript Library
  * Copyright (c) 2016 yonyou.com
  * Author: gct@yonyou.com
- * Version: 3.0.0.20160823.2047
+ * Version: 3.0.0.20161028.1108
  */ 
 var UM = UM || {};
 UM.UI = UM.UI || {};
 
 UM.UI.eventType = UM.UI.eventType || {
-	down: "mousedown",
-	move: "mousemove",
-	up: "mouseup"
+    down: "mousedown",
+    move: "mousemove",
+    up: "mouseup"
 };
 UM.UI.isMobile = false;// 判断是否是移动可触摸设备
 
 if ("ontouchstart" in document) {
-	UM.UI.eventType = {
-		down: "touchstart",
-		move: "touchmove",
-		up: "touchend"
-	};
-	UM.UI.isMobile = true;
+    UM.UI.eventType = {
+        down: "touchstart",
+        move: "touchmove",
+        up: "touchend"
+    };
+    UM.UI.isMobile = true;
 }
+//=========================================================================
+//-----------------------------------------------------------------------
+// Copyright (C) Yonyou Corporation. All rights reserved.
+// include : UMP.Web.EventMgr
+// Author gct@yonyou.com
+//-----------------------------------------------------------------------
+/*!
+ * UAP Mobile JavaScript Library v2.7.0
+ */
+(function( window, undefined ) {
+    UM = window.UM || {};
+    UM._inherit = (function () {
+        var F = function () {
+        };
+        return function (C, P) {
+            F.prototype = P.prototype;
+            C.prototype = new F();
+            C.base =  P.prototype;
+            C.prototype.constructor = C;
+        };
+    })();
+
+    UM.EventMgr = function() {
+        this._events = {};
+        /*
+         this._events = {
+         "oninit" :[function(){},function(){}],
+         "onload" :[function(){},function(){}]
+         }
+         */
+    }
+    UM.EventMgr.prototype.on = function(evtName, handler) {
+        if (this._events[evtName] == null) {
+            this._events[evtName] = [];
+        }
+        this._events[evtName].push(handler);
+    }
+    UM.EventMgr.prototype.off = function(evtName, handler) {
+        var handlers = this._events[evtName];
+        if (typeof handler == "undefined") {
+            delete handlers;
+        } else {
+            var index = -1;
+            for (var i = 0, len = handlers.length; i < len; i++) {
+                if (handler == handlers[i]) {
+                    index = i;
+                    break;
+                }
+            }
+            if (index > 0)
+                handlers.remove(index);
+        }
+    }
+    UM.EventMgr.prototype.trigger = function(evtName, sender, args) {
+        try{
+            var handlers = this._events[evtName] || [];
+            var handler;
+            args = args || {};
+            for (var i=0,len=handlers.length; i < len; i++) {
+                handler = handlers[i];
+                handler(sender, args);
+            }
+        }catch(e){
+            alert(e);
+        }
+    }
+
+    UM.NativeContainer = function() {
+        this._eventMgr = new UM.EventMgr();
+    }
+    UM.NativeContainer.prototype.onReady = function(handler){
+        this._eventMgr.on("ready", handler)
+    },
+    UM.NativeContainer.prototype.on = function(evtName, handler){
+        this._eventMgr.on(evtName, handler)
+    },
+    UM.NativeContainer.prototype.off = function(evtName, handler){
+        this._eventMgr.off(evtName, handler)
+    },
+    UM.NativeContainer.prototype.trigger = function(evtName, sender, args){
+        this._eventMgr.trigger(evtName, sender, args)
+    }
+    
+    UM.nativeContainer = new UM.NativeContainer();
+    
+})( window );
 
 $(function() {
-	// 远程调试 
-	/*(function(e) {
-		e.setAttribute("src", "http://10.2.112.94:8080/target/target-script-min.js#anonymous");
-		document.getElementsByTagName("body")[0].appendChild(e);
-	})(document.createElement("script"));
-	*/
-	//解决ios上无激活状态的问题
-	document.body.addEventListener('touchstart', function() {});
+    // 远程调试 
+    /*(function(e) {
+        e.setAttribute("src", "http://10.2.112.94:8080/target/target-script-min.js#anonymous");
+        document.getElementsByTagName("body")[0].appendChild(e);
+    })(document.createElement("script"));
+    */
+    //解决ios上无激活状态的问题
+    document.body.addEventListener('touchstart', function() {});
 
-	//消除点击click延迟
-	//FastClick.attach(document.body);
-	
-	$(document).on("touchmove", ".overlay", function(e) {
-		e.preventDefault();
-		return false;
-	})
-	
+    //消除点击click延迟
+    //FastClick.attach(document.body);
+    
+    $(document).on("touchmove", ".overlay", function(e) {
+        e.preventDefault();
+        return false;
+    })
+    
 });
 /*window.addEventListener('load', function() {
-	setTimeout(function() {
-		window.scrollTo(0, 1);
-	}, 20);
+    setTimeout(function() {
+        window.scrollTo(0, 1);
+    }, 20);
 });*/
 /* 折叠菜单 */ 
 ;
@@ -70,163 +156,163 @@ $(function() {
   })
 }(jQuery);
 /**
-*	@name							Elastic
-*	@descripton						Elastic is jQuery plugin that grow and shrink your textareas automatically
-*	@version						1.6.10
-*	@requires						jQuery 1.2.6+
+*   @name                           Elastic
+*   @descripton                     Elastic is jQuery plugin that grow and shrink your textareas automatically
+*   @version                        1.6.10
+*   @requires                       jQuery 1.2.6+
 *
-*	@author							Jan Jarfalk
-*	@author-email					jan.jarfalk@unwrongest.com
-*	@author-website					http://www.unwrongest.com
+*   @author                         Jan Jarfalk
+*   @author-email                   jan.jarfalk@unwrongest.com
+*   @author-website                 http://www.unwrongest.com
 *
-*	@licence						MIT License - http://www.opensource.org/licenses/mit-license.php
+*   @licence                        MIT License - http://www.opensource.org/licenses/mit-license.php
 */
 ;
 (function(jQuery){ 
-	jQuery.fn.extend({  
-		elastic: function() {
-		
-			//	We will create a div clone of the textarea
-			//	by copying these attributes from the textarea to the div.
-			var mimics = [
-				'paddingTop',
-				'paddingRight',
-				'paddingBottom',
-				'paddingLeft',
-				'fontSize',
-				'lineHeight',
-				'fontFamily',
-				'width',
-				'fontWeight',
-				'border-top-width',
-				'border-right-width',
-				'border-bottom-width',
-				'border-left-width',
-				'borderTopStyle',
-				'borderTopColor',
-				'borderRightStyle',
-				'borderRightColor',
-				'borderBottomStyle',
-				'borderBottomColor',
-				'borderLeftStyle',
-				'borderLeftColor'
-				];
-			
-			return this.each( function() {
-				
-				// Elastic only works on textareas
-				if ( this.type !== 'textarea' ) {
-					return false;
-				}
-					
-			var $textarea	= jQuery(this),
-				$twin		= jQuery('<div />').css({'position': 'absolute','display':'none','word-wrap':'break-word'}),
-				lineHeight	= parseInt($textarea.css('line-height'),10) || parseInt($textarea.css('font-size'),'10'),
-				minheight	= parseInt($textarea.css('height'),10) || lineHeight*3,
-				maxheight	= parseInt($textarea.css('max-height'),10) || Number.MAX_VALUE,
-				goalheight	= 0;
-				
-				// Opera returns max-height of -1 if not set
-				if (maxheight < 0) { maxheight = Number.MAX_VALUE; }
-					
-				// Append the twin to the DOM
-				// We are going to meassure the height of this, not the textarea.
-				$twin.appendTo($textarea.parent());
-				
-				// Copy the essential styles (mimics) from the textarea to the twin
-				var i = mimics.length;
-				while(i--){
-					$twin.css(mimics[i].toString(),$textarea.css(mimics[i].toString()));
-				}
-				
-				// Updates the width of the twin. (solution for textareas with widths in percent)
-				function setTwinWidth(){
-					curatedWidth = Math.floor(parseInt($textarea.width(),10));
-					if($twin.width() !== curatedWidth){
-						$twin.css({'width': curatedWidth + 'px'});
-						
-						// Update height of textarea
-						update(true);
-					}
-				}
-				
-				// Sets a given height and overflow state on the textarea
-				function setHeightAndOverflow(height, overflow){
-				
-					var curratedHeight = Math.floor(parseInt(height,10));
-					if($textarea.height() !== curratedHeight){
-						$textarea.css({'height': curratedHeight + 'px','overflow':overflow});
-						
-						// Fire the custom event resize
-						$textarea.trigger('resize');
-						
-					}
-				}
-				
-				// This function will update the height of the textarea if necessary 
-				function update(forced) {
-					
-					// Get curated content from the textarea.
-					var textareaContent = $textarea.val().replace(/&/g,'&amp;').replace(/ {2}/g, '&nbsp;').replace(/<|>/g, '&gt;').replace(/\n/g, '<br />');
-					
-					// Compare curated content with curated twin.
-					var twinContent = $twin.html().replace(/<br>/ig,'<br />');
-					
-					if(forced || textareaContent+'&nbsp;' !== twinContent){
-					
-						// Add an extra white space so new rows are added when you are at the end of a row.
-						$twin.html(textareaContent+'&nbsp;');
-						
-						// Change textarea height if twin plus the height of one line differs more than 3 pixel from textarea height
-						if(Math.abs($twin.height() + lineHeight - $textarea.height()) > 3){
-							
-							var goalheight = $twin.height()+lineHeight;
-							if(goalheight >= maxheight) {
-								setHeightAndOverflow(maxheight,'auto');
-							} else if(goalheight <= minheight) {
-								setHeightAndOverflow(minheight,'hidden');
-							} else {
-								setHeightAndOverflow(goalheight,'hidden');
-							}
-							
-						}
-						
-					}
-					
-				}
-				
-				// Hide scrollbars
-				$textarea.css({'overflow':'hidden'});
-				
-				// Update textarea size on keyup, change, cut and paste
-				$textarea.bind('keyup change cut paste', function(){
-					update(); 
-				});
-				
-				// Update width of twin if browser or textarea is resized (solution for textareas with widths in percent)
-				$(window).bind('resize', setTwinWidth);
-				$textarea.bind('resize', setTwinWidth);
-				$textarea.bind('update', update);
-				
-				// Compact textarea on blur
-				$textarea.bind('blur',function(){
-					if($twin.height() < maxheight){
-						if($twin.height() > minheight) {
-							$textarea.height($twin.height());
-						} else {
-							$textarea.height(minheight);
-						}
-					}
-				});
-				
-				// And this line is to catch the browser paste event
-				$textarea.bind('input paste',function(e){ setTimeout( update, 250); });				
-				
-				// Run update once when elastic is initialized
-				update();
-				
-			});
-			
+    jQuery.fn.extend({  
+        elastic: function() {
+        
+            //  We will create a div clone of the textarea
+            //  by copying these attributes from the textarea to the div.
+            var mimics = [
+                'paddingTop',
+                'paddingRight',
+                'paddingBottom',
+                'paddingLeft',
+                'fontSize',
+                'lineHeight',
+                'fontFamily',
+                'width',
+                'fontWeight',
+                'border-top-width',
+                'border-right-width',
+                'border-bottom-width',
+                'border-left-width',
+                'borderTopStyle',
+                'borderTopColor',
+                'borderRightStyle',
+                'borderRightColor',
+                'borderBottomStyle',
+                'borderBottomColor',
+                'borderLeftStyle',
+                'borderLeftColor'
+                ];
+            
+            return this.each( function() {
+                
+                // Elastic only works on textareas
+                if ( this.type !== 'textarea' ) {
+                    return false;
+                }
+                    
+            var $textarea   = jQuery(this),
+                $twin       = jQuery('<div />').css({'position': 'absolute','display':'none','word-wrap':'break-word'}),
+                lineHeight  = parseInt($textarea.css('line-height'),10) || parseInt($textarea.css('font-size'),'10'),
+                minheight   = parseInt($textarea.css('height'),10) || lineHeight*3,
+                maxheight   = parseInt($textarea.css('max-height'),10) || Number.MAX_VALUE,
+                goalheight  = 0;
+                
+                // Opera returns max-height of -1 if not set
+                if (maxheight < 0) { maxheight = Number.MAX_VALUE; }
+                    
+                // Append the twin to the DOM
+                // We are going to meassure the height of this, not the textarea.
+                $twin.appendTo($textarea.parent());
+                
+                // Copy the essential styles (mimics) from the textarea to the twin
+                var i = mimics.length;
+                while(i--){
+                    $twin.css(mimics[i].toString(),$textarea.css(mimics[i].toString()));
+                }
+                
+                // Updates the width of the twin. (solution for textareas with widths in percent)
+                function setTwinWidth(){
+                    curatedWidth = Math.floor(parseInt($textarea.width(),10));
+                    if($twin.width() !== curatedWidth){
+                        $twin.css({'width': curatedWidth + 'px'});
+                        
+                        // Update height of textarea
+                        update(true);
+                    }
+                }
+                
+                // Sets a given height and overflow state on the textarea
+                function setHeightAndOverflow(height, overflow){
+                
+                    var curratedHeight = Math.floor(parseInt(height,10));
+                    if($textarea.height() !== curratedHeight){
+                        $textarea.css({'height': curratedHeight + 'px','overflow':overflow});
+                        
+                        // Fire the custom event resize
+                        $textarea.trigger('resize');
+                        
+                    }
+                }
+                
+                // This function will update the height of the textarea if necessary 
+                function update(forced) {
+                    
+                    // Get curated content from the textarea.
+                    var textareaContent = $textarea.val().replace(/&/g,'&amp;').replace(/ {2}/g, '&nbsp;').replace(/<|>/g, '&gt;').replace(/\n/g, '<br />');
+                    
+                    // Compare curated content with curated twin.
+                    var twinContent = $twin.html().replace(/<br>/ig,'<br />');
+                    
+                    if(forced || textareaContent+'&nbsp;' !== twinContent){
+                    
+                        // Add an extra white space so new rows are added when you are at the end of a row.
+                        $twin.html(textareaContent+'&nbsp;');
+                        
+                        // Change textarea height if twin plus the height of one line differs more than 3 pixel from textarea height
+                        if(Math.abs($twin.height() + lineHeight - $textarea.height()) > 3){
+                            
+                            var goalheight = $twin.height()+lineHeight;
+                            if(goalheight >= maxheight) {
+                                setHeightAndOverflow(maxheight,'auto');
+                            } else if(goalheight <= minheight) {
+                                setHeightAndOverflow(minheight,'hidden');
+                            } else {
+                                setHeightAndOverflow(goalheight,'hidden');
+                            }
+                            
+                        }
+                        
+                    }
+                    
+                }
+                
+                // Hide scrollbars
+                $textarea.css({'overflow':'hidden'});
+                
+                // Update textarea size on keyup, change, cut and paste
+                $textarea.bind('keyup change cut paste', function(){
+                    update(); 
+                });
+                
+                // Update width of twin if browser or textarea is resized (solution for textareas with widths in percent)
+                $(window).bind('resize', setTwinWidth);
+                $textarea.bind('resize', setTwinWidth);
+                $textarea.bind('update', update);
+                
+                // Compact textarea on blur
+                $textarea.bind('blur',function(){
+                    if($twin.height() < maxheight){
+                        if($twin.height() > minheight) {
+                            $textarea.height($twin.height());
+                        } else {
+                            $textarea.height(minheight);
+                        }
+                    }
+                });
+                
+                // And this line is to catch the browser paste event
+                $textarea.bind('input paste',function(e){ setTimeout( update, 250); });             
+                
+                // Run update once when elastic is initialized
+                update();
+                
+            });
+            
         } 
     }); 
 })(jQuery);
@@ -264,175 +350,179 @@ $("textarea.form-control").elastic();
     this.type = type;
     this._init();
   }
-    _UModal.prototype = {
-        constructor: _UModal,
+  _UModal.prototype = {
+    constructor: _UModal,
 
-        overlay: $('<div class="um-overlay"></div>'),
+    overlay: $('<div class="um-overlay"></div>'),
 
-        defaults: {
-            title: window.location.host || "",
-            text: "",
-            btnText: ["取消", "确定"],
-            overlay: true,
-            cancle: function() {},
-            ok: function(data) {}
-        },
+    defaults: {
+      title: window.location.host || "",
+      text: "",
+      btnText: ["取消", "确定"],
+      overlay: true,
+      cancle: function() {},
+      ok: function(data) {}
+    },
 
-        done: function(fn) {
-            if (typeof fn === "function" && this._complete) {
-                fn.call(this);
-            }
-        },
+    done: function(fn) {
+      if (typeof fn === "function" && this._complete) {
+        fn.call(this);
+      }
+    },
 
-        _generateHTML: function() {
+    _generateHTML: function() {
 
-            var settings = this.settings,
-                type = this.type,
-                html;
+      var settings = this.settings,
+          type = this.type,
+          html;
 
-            html = '<div class="um-modal"><div class="um-modal-content um-border-bottom">';
+      html = '<div class="um-modal"><div class="um-modal-content um-border-bottom">';
 
-            if (settings.title) {
-                html += '<div class="um-modal-title">' + settings.title + '</div>';
-            }
-            if (settings.text) {
-                html += '<div class="um-modal-text">';
-                //if(type === "tips") html += '<span class="um-ani-rotate"></span>';
-                html += settings.text + '</div>';
-            }
-            if (type === "prompt") {
-                html += '<div class="um-modal-input"><input type="text" class="form-control"></div>';
-            }
+      if (settings.title) {
+        html += '<div class="um-modal-title">' + settings.title + '</div>';
+      }
+      if (settings.text) {
+        html += '<div class="um-modal-text">';
+        //if(type === "tips") html += '<span class="um-ani-rotate"></span>';
+        html += settings.text + '</div>';
+      }
+      if (type === "prompt") {
+        html += '<div class="um-modal-input"><input type="text" class="form-control"></div>';
+      }
 
-            if (type === "login") {
-                html += '<div class="um-modal-input"><input type="text" class="form-control" placeholder="请输入账号"><input type="password" class="form-control" placeholder="请输入密码"></div>';
-            }
+      if (type === "login") {
+        html += '<div class="um-modal-input"><input type="text" class="form-control" placeholder="请输入账号"><input type="password" class="form-control" placeholder="请输入密码"></div>';
+      }
 
-            type === "toast" ? html += '</div>' : html += '</div><div class="um-modal-btns">';
+      type === "toast" ? html += '</div>' : html += '</div><div class="um-modal-btns">';
 
-            if (type === "confirm" || type === "login" || type === "prompt") {
-                html += '<a href="#" class="btn cancle">' + settings.btnText[0] + '</a>';
-            }
+      if (type === "confirm" || type === "login" || type === "prompt") {
+        html += '<a href="#" class="btn cancle">' + settings.btnText[0] + '</a>';
+      }
 
-            if (type === "toast") {
-                html += '</div>';
-                var that=this;
-                var duration=settings.duration? settings.duration:2000;
-                setTimeout(function(){
-                    that.destory(that.modal);
-                },duration)
-            } else {
-                html += '<a href="#" class="btn ok">' + settings.btnText[1] +
-                    '</a></div></div>';
-            }
+      if (type === "toast") {
+        html += '</div>';
+        var that=this;
+        var duration=settings.duration? settings.duration:2000;
+        setTimeout(function(){
+          that.destroy(that.modal);
+        },duration)
+      } else {
+        html += '<a href="#" class="btn ok">' + settings.btnText[1] +
+            '</a></div></div>';
+      }
 
-            if (type === "loading") {
-                var text=settings.text? settings.text:'正在加载';
-                var icons=settings.icons ? settings.icons:'ti-reload';
-                html = '<div class="um-modal" style="background-color: rgba(0, 0, 0, 0.2);width: 150px;margin-left: -75px;padding: 20px;border-radius: 12px;"><div style="color: #ffffff;">'+text+'</div><span class="um-ani-rotate '+icons+'"></span></div>';
-            }
-            this.html = html;
-        },
-        _showModal: function() {
+      if (type === "loading") {
+        var text=settings.text? settings.text:'正在加载';
+        var icons=settings.icons ? settings.icons:'ti-reload';
+        html = '<div class="um-modal" style="background-color: rgba(0, 0, 0, 0.2);width: 150px;margin-left: -75px;padding: 20px;border-radius: 12px;"><div style="color: #ffffff;">'+text+'</div><span class="um-ani-rotate '+icons+'"></span></div>';
+      }
+      this.html = html;
+    },
+    _showModal: function() {
 
-            this.settings.overlay && this.overlay.appendTo($('body')).fadeIn(300);
+      this.settings.overlay && this.overlay.appendTo($('body')).fadeIn(300);
 
-            var modal = $(this.html).appendTo($('body')),
+      var modal = $(this.html).appendTo($('body')),
 
-                modalH = modal.outerHeight(),
-                wh = window.innerHeight;
-            console.log(modal);
-            modal.css('top', (wh - modalH - 20) / 2);
+          modalH = modal.outerHeight(),
+          wh = window.innerHeight;
+      console.log(modal);
+      modal.css('top', (wh - modalH - 20) / 2);
 
-            setTimeout(function() {
-                modal.addClass('um-modal-in');
-            }, 100);
+      setTimeout(function() {
+        modal.addClass('um-modal-in');
+      }, 100);
 
-            this.modal = modal;
-            this._attachEvent();
-        },
-        _attachEvent: function() {
-            var that = this;
-            that.modal.on("click", '.btn', function(e) {
-                e.preventDefault();
-                if ($(this).hasClass('cancle')) {
-                    setTimeout(function() {
-                        that.settings.cancle(data)
-                    }, 100);
-                }
-                if ($(this).hasClass('ok')) {
-                    var input = that.modal.find('.form-control'),
-                        inputLen = input.length,
-                        data;
-                    if (inputLen) {
-                        if (inputLen == 1) data = that.modal.find('.form-control').val();
-                        else {
-                            data = [];
-                            $.each(input, function() {
-                                data.push(this.value);
-                            });
-                        }
-                    }
-                    setTimeout(function() {
-                        that.settings.ok(data)
-                    }, 100);
-                }
-                that.destory(that.modal);
-            });
-        },
-        destory: function() {
-            var that = this;
-            this.modal.removeClass('um-modal-in').addClass('um-modal-out').on('webkitTransitionEnd', function() {
-                that.modal.off('webkitTransitionEnd');
-                that.modal.removeClass('um-modal-out');
-                that.modal.remove();
-            });
-            // 避免遮罩闪烁
-            this.settings.overlay && this.overlay.remove();
-        },
-        _init: function() {
-
-            this._generateHTML();
-            this._showModal();
-
-            if (this.type === 'tips' || this.type === 'loading') {
-                this._complete = 1;
-            }
+      this.modal = modal;
+      this._attachEvent();
+    },
+    _attachEvent: function() {
+      var that = this;
+      that.modal.on("click", '.btn', function(e) {
+        e.preventDefault();
+        if ($(this).hasClass('cancle')) {
+          setTimeout(function() {
+            that.settings.cancle(data)
+          }, 100);
         }
+        if ($(this).hasClass('ok')) {
+          var input = that.modal.find('.form-control'),
+              inputLen = input.length,
+              data;
+          if (inputLen) {
+            if (inputLen == 1) data = that.modal.find('.form-control').val();
+            else {
+              data = [];
+              $.each(input, function() {
+                data.push(this.value);
+              });
+            }
+          }
+          setTimeout(function() {
+            that.settings.ok(data)
+          }, 100);
+        }
+        that.destroy(that.modal);
+      });
+    },
+    destroy: function() {
+      var that = this;
+      this.modal.removeClass('um-modal-in').addClass('um-modal-out').on('webkitTransitionEnd', function() {
+        that.modal.off('webkitTransitionEnd');
+        that.modal.removeClass('um-modal-out');
+        that.modal.remove();
+      });
+      // 避免遮罩闪烁
+      this.settings.overlay && this.overlay.remove();
+    },
+    _init: function() {
+
+      this._generateHTML();
+      this._showModal();
+
+      if (this.type === 'tips' || this.type === 'loading') {
+        this._complete = 1;
+      }
     }
-    var loadingModal=null;/*用来接收loading对象*/
-    var api={
-        alert: function (options) {
-            var $alert='alert';
-            return new _UModal($alert,options);
-        },
-        confirm: function (options) {
-            var $confirm='confirm';
-            return new _UModal($confirm,options);
-        },
-        prompt: function (options) {
-            var $prompt='prompt';
-            return new _UModal($prompt,options);
-        },
-        login: function (options) {
-            var $login='login';
-            return new _UModal($login,options);
-        },
-        toast: function (options) {
-            var $toast='toast';
-            return new _UModal($toast,options);
-        },
-        showLoadingBar: function (options) {
-            var $loading='loading';
-            loadingModal = new _UModal($loading,options);
-            //eturn loadingModal;
-        },
-        hideLoadingBar: function () {
-            console.log(loadingModal);
-            loadingModal.destroy();
-        }
-    };
-    $.extend(UM,api);
+  }
+  var loadingModal=null;/*用来接收loading对象*/
+  var api={
+    alert: function (options) {
+      var $alert='alert';
+      return new _UModal($alert,options);
+    },
+    confirm: function (options) {
+      var $confirm='confirm';
+      return new _UModal($confirm,options);
+    },
+    prompt: function (options) {
+      var $prompt='prompt';
+      return new _UModal($prompt,options);
+    },
+    login: function (options) {
+      var $login='login';
+      return new _UModal($login,options);
+    },
+    toast: function (options) {
+      var $toast='toast';
+      return new _UModal($toast,options);
+    },
+    showLoadingBar: function (options) {
+      var $loading='loading';
+      loadingModal = new _UModal($loading,options);
+      //eturn loadingModal;
+    },
+    hideLoadingBar: function () {
+      console.log(loadingModal);
+      loadingModal.destroy();
+    }
+  };
+  $.extend(UM,api);
+  UM.modal = function(type, options) {
+    return new _UModal(type, options);
+  }
+  return UM.modal;
 }))
 
 ;
@@ -1101,173 +1191,63 @@ $("textarea.form-control").elastic();
     }
 
 }(typeof window !== "undefined" ? window : this, function(window, noGlobal) {
-	function Imgmark(options) {
-		var defaults = {
-			"selector": "",//水印选择器
-			"imgmark": "",//水印图片路径
-			//水印样式设置，类css
-			"style": {
-				position: "absolute",
-				opacity: .5,
-				right: 5,
-				bottom: 5
-			},
-			"text": "",//水印文字
-			"textStyle": {
-				position: "absolute",
-				opacity: .8,
-				left: 10,
-				bottom: 10,
-				color: "#fff",
-				fontWeight: "bold"
-			}
-		}
-		this.settings = $.extend(true, {}, defaults, options);
+    function Imgmark(options) {
+        var defaults = {
+            "selector": "",//水印选择器
+            "imgmark": "",//水印图片路径
+            //水印样式设置，类css
+            "style": {
+                position: "absolute",
+                opacity: .5,
+                right: 5,
+                bottom: 5
+            },
+            "text": "",//水印文字
+            "textStyle": {
+                position: "absolute",
+                opacity: .8,
+                left: 10,
+                bottom: 10,
+                color: "#fff",
+                fontWeight: "bold"
+            }
+        }
+        this.settings = $.extend(true, {}, defaults, options);
 
-		var settings = this.settings,
-			$el = this.settings.selector && $(this.settings.selector).length && $(this.settings.selector),
-			imgmark = this.settings.imgmark,
-			text = this.settings.text;
+        var settings = this.settings,
+            $el = this.settings.selector && $(this.settings.selector).length && $(this.settings.selector),
+            imgmark = this.settings.imgmark,
+            text = this.settings.text;
 
-		if (!($el && (imgmark || text))) return;
+        if (!($el && (imgmark || text))) return;
 
-		$el.wrap($("<div/>", {
-			class: "pr ib"
-		}))
+        $el.wrap($("<div/>", {
+            class: "pr ib"
+        }))
 
-		if (imgmark) {
-			var mark = new Image();
-			mark.onload = function() {
-				$el.after($("<img/>", {
-					"src": imgmark,
-					"css": settings.style
-				}));
-			}
-			mark.src = imgmark;
-		}
-		if (text) {
-			$el.after($("<span/>", {
-				"text": text,
-				"css": settings.textStyle
-			}))
-		}
-	}
-	UM.imgMark = function(options) {
-		return new Imgmark(options);
-	}
-	return UM.imgMark;
+        if (imgmark) {
+            var mark = new Image();
+            mark.onload = function() {
+                $el.after($("<img/>", {
+                    "src": imgmark,
+                    "css": settings.style
+                }));
+            }
+            mark.src = imgmark;
+        }
+        if (text) {
+            $el.after($("<span/>", {
+                "text": text,
+                "css": settings.textStyle
+            }))
+        }
+    }
+    UM.imgMark = function(options) {
+        return new Imgmark(options);
+    }
+    return UM.imgMark;
 }))
 
-;
-(function(global, factory) {
-	if (typeof module === "object" && typeof module.exports === "object") {
-		module.exports = global.document ?
-			factory(global, true) :
-			function(w) {
-				if (!w.document) {
-					throw new Error("requires a window with a document");
-				}
-				return factory(w);
-			};
-	} else if (typeof define === "function" && define.amd) {
-		define(["jquery", "UM"], function() {
-			return factory(global);
-		});
-	} else {
-		factory(global);
-	}
-
-}(typeof window !== "undefined" ? window : this, function(window, noGlobal) {
-	
-		var raty = function(options) {
-			this.defaults = {
-				id: null, //评分控件的id名字
-				number: 5, // 评分星级
-				half: false, //是否支持半星
-				score: 0, //初始值
-				showText: false, //是否显示文字描述
-				text: [], //文字描述
-				click: function(score, evt) {} //点击回调函数，score为点击的星级
-			}
-			this.settings = $.extend(true, {}, this.defaults, options);
-			this.init();
-		}
-		raty.prototype = {
-			init: function() {
-				var _this = this;
-				var $el = $("#" + this.settings.id).addClass("um-grade");
-				if (!$el || !$el.length) return;
-				var number = this.settings.number;
-
-				for (var i = 0; i < number; i++) {
-					$el.append($("<div/>", {
-						"class": "um-grade-out",
-						title: this.settings.text[i]
-					}));
-				}
-
-				if (this.settings.showText) {
-					$el.append($("<div/>", {
-						"class": "um-grade-text"
-					}))
-				}
-				this.score(this.settings.score);
-				$el.on("click", ".um-grade-out", function(e) {
-					var index = $(this).index();
-					_this.score(index + 1, e);
-					_this._half(e);
-					$(this).trigger("myclick", [index + 1, e]);
-				})
-			},
-			bindClick: function(fn) {
-				$("#" + this.settings.id).on("myclick", function(event, data, e) {
-					fn.call(null, data, e);
-				});
-			},
-			score: function(score, ev) {
-				var number = this.settings.number;
-				var $el = $("#" + this.settings.id);
-				if (score < 0 || score > number) {
-					console.warn("评分数超出范围");
-					return;
-				};
-				var number = number;
-
-				if (this.settings.showText) {
-					if (this.settings.text[score - 1]) {
-						$el.find(".um-grade-msg").html(this.settings.text[score - 1]);
-					} else {
-						$el.find(".um-grade-msg").html(this.defaults.text[score - 1]);
-					}
-				}
-				$el.find(".um-grade-out:lt(" + score + ")").addClass("um-grade-in").end().find(".um-grade-out:gt(" + (score - 1) + ")").removeClass("um-grade-in");
-			},
-			_half: function(e) {
-				var ishalf = this.settings.half;
-				var $el = $("#" + this.settings.id);
-				var px = $(e.target).offset().left + $(e.target).width() / 2;
-				var cx = e.pageX;
-				var index = $(e.target).index();
-
-				if (ishalf) {
-					$el.find(".um-grade-out").removeClass("um-grade-half");
-					if (px > cx) {
-						px > cx && $el.find(".um-grade-out").eq(index).addClass("um-grade-half").siblings(".um-grade-out").removeClass("half");
-						this.settings.click(index + 0.5, e);
-					} else {
-						$el.find(".um-grade-out").removeClass("um-grade-half");
-						this.settings.click(index + 1, e);
-					}
-				} else {
-					this.settings.click(index + 1, e);
-				}
-			}
-		}
-		UM.raty = function(o) {
-			return new raty(o);
-		}
-		return UM.raty;
-}))
 ;
 (function(global, factory) {
     if (typeof module === "object" && typeof module.exports === "object") {
@@ -1280,7 +1260,7 @@ $("textarea.form-control").elastic();
                 return factory(w);
             };
     } else if (typeof define === "function" && define.amd) {
-        define(["jquery", "UM"],function() {
+        define(["jquery", "UM"], function() {
             return factory(global);
         });
     } else {
@@ -1288,11 +1268,121 @@ $("textarea.form-control").elastic();
     }
 
 }(typeof window !== "undefined" ? window : this, function(window, noGlobal) {
-    var activeDom = function(type,options){
+    
+        var raty = function(options) {
+            this.defaults = {
+                id: null, //评分控件的id名字
+                number: 5, // 评分星级
+                half: false, //是否支持半星
+                score: 0, //初始值
+                showText: false, //是否显示文字描述
+                text: [], //文字描述
+                click: function(score, evt) {} //点击回调函数，score为点击的星级
+            }
+            this.settings = $.extend(true, {}, this.defaults, options);
+            this.init();
+        }
+        raty.prototype = {
+            init: function() {
+                var _this = this;
+                var $el = $("#" + this.settings.id).addClass("um-grade");
+                if (!$el || !$el.length) return;
+                var number = this.settings.number;
+
+                for (var i = 0; i < number; i++) {
+                    $el.append($("<div/>", {
+                        "class": "um-grade-out",
+                        title: this.settings.text[i]
+                    }));
+                }
+
+                if (this.settings.showText) {
+                    $el.append($("<div/>", {
+                        "class": "um-grade-text"
+                    }))
+                }
+                this.score(this.settings.score);
+                $el.on("click", ".um-grade-out", function(e) {
+                    var index = $(this).index();
+                    _this.score(index + 1, e);
+                    _this._half(e);
+                    $(this).trigger("myclick", [index + 1, e]);
+                })
+            },
+            bindClick: function(fn) {
+                $("#" + this.settings.id).on("myclick", function(event, data, e) {
+                    fn.call(null, data, e);
+                });
+            },
+            score: function(score, ev) {
+                var number = this.settings.number;
+                var $el = $("#" + this.settings.id);
+                if (score < 0 || score > number) {
+                    console.warn("评分数超出范围");
+                    return;
+                };
+                var number = number;
+
+                if (this.settings.showText) {
+                    if (this.settings.text[score - 1]) {
+                        $el.find(".um-grade-msg").html(this.settings.text[score - 1]);
+                    } else {
+                        $el.find(".um-grade-msg").html(this.defaults.text[score - 1]);
+                    }
+                }
+                $el.find(".um-grade-out:lt(" + score + ")").addClass("um-grade-in").end().find(".um-grade-out:gt(" + (score - 1) + ")").removeClass("um-grade-in");
+            },
+            _half: function(e) {
+                var ishalf = this.settings.half;
+                var $el = $("#" + this.settings.id);
+                var px = $(e.target).offset().left + $(e.target).width() / 2;
+                var cx = e.pageX;
+                var index = $(e.target).index();
+
+                if (ishalf) {
+                    $el.find(".um-grade-out").removeClass("um-grade-half");
+                    if (px > cx) {
+                        px > cx && $el.find(".um-grade-out").eq(index).addClass("um-grade-half").siblings(".um-grade-out").removeClass("half");
+                        this.settings.click(index + 0.5, e);
+                    } else {
+                        $el.find(".um-grade-out").removeClass("um-grade-half");
+                        this.settings.click(index + 1, e);
+                    }
+                } else {
+                    this.settings.click(index + 1, e);
+                }
+            }
+        }
+        UM.raty = function(o) {
+            return new raty(o);
+        }
+        return UM.raty;
+}))
+;
+(function (global, factory) {
+    if (typeof module === "object" && typeof module.exports === "object") {
+        module.exports = global.document ?
+            factory(global, true) :
+            function (w) {
+                if (!w.document) {
+                    throw new Error("requires a window with a document");
+                }
+                return factory(w);
+            };
+    } else if (typeof define === "function" && define.amd) {
+        define(["jquery", "UM"], function () {
+            return factory(global);
+        });
+    } else {
+        factory(global);
+    }
+
+}(typeof window !== "undefined" ? window : this, function (window, noGlobal) {
+    var activeDom = function (type, options) {
         this.type = type;
-        if(options){
-            this.settings=options;
-            var itemtarget='#actionsheet';
+        if (options) {
+            this.settings = options;
+            var itemtarget = '#actionsheet';
             this.open(itemtarget);
         }
 
@@ -1303,101 +1393,105 @@ $("textarea.form-control").elastic();
 
             var that = this;
             this.$target = target && $(target).length && $(target);
-            if(target=='#actionsheet'){
+            this.direction = pushPageDirection;
+            if (target == '#actionsheet') {
 
                 this._generateHTMl();
                 this._showHtml();
-                this.$target=this.actionSheet;
+                this.$target = this.actionSheet;
             }
 
             if (!this.$target || !this.$target.hasClass("um-" + this.type)) {
                 return;
             }
             this.$target.addClass("active");
-            var that=this;
+            var that = this;
             setTimeout(function () {
-                that.$target.css('transform','translate3d(0, 0, 0)');
-            },100)
+                that.$target.css('transform', 'translate3d(0, 0, 0)');
+            }, 100)
             if (pushPageDirection) {
                 var pushPageClass = "um-page-pushfrom" + pushPageDirection;
                 this.$target.data("pushPageClass", pushPageClass);
 
                 $(".um-page.active").addClass("um-transition-default").addClass(pushPageClass);
             }
-            this.$overlay = pushPageDirection ? $('<div class="overlay" style="background-color:rgba(0,0,0,0.1)"></div>') : $('<div class="overlay"></div>');
+            this.$overlay = pushPageDirection ? $('<div class="overlay"></div>') : $('<div class="overlay"></div>');
 
             this.$target.before(this.$overlay);
-
-            this.$overlay.on(UM.UI.eventType.down, function () {
-                that.close();
-            });
+            //取消点击遮罩层
+            /* this.$overlay.on(UM.UI.eventType.down, function () {
+             that.close();
+             });*/
         },
         _generateHTMl: function () {
-            var settings=this.settings ? this.settings :{};
-            var type=this.type,
-                that=this;
-            if(type == 'actionsheet'){
-                var $content=$('<div class="um-actionsheet" id="actionsheet"> <ul class="um-list um-list-corner"> <li> <div class="btn action-cancle">取消</div> </li> </ul> </div>');
-                var $firstUl=$('<ul class="um-list um-list-corner"></ul>');
+            var settings = this.settings ? this.settings : {};
+            var type = this.type,
+                that = this;
+            if (type == 'actionsheet') {
+                var $content = $('<div class="um-actionsheet" id="actionsheet"> <ul class="um-list um-list-corner"> <li> <div class="btn action-cancle">取消</div> </li> </ul> </div>');
+                var $firstUl = $('<ul class="um-list um-list-corner"></ul>');
                 $content.prepend($firstUl);
-                if(settings.title){
-                    var $title=$('<li> <p class="btn popup-title">'+settings.title+' </p> </li>');
+                if (settings.title) {
+                    var $title = $('<li> <p class="btn popup-title">' + settings.title + ' </p> </li>');
                     $firstUl.append($title)
                 }
-                if(settings.items){
-                    for(var i=0; i<settings.items.length;i++){
-                        var $li=$('<li> <div class="btn action-item">'+settings.items[i]+'</div> </li>');
+                if (settings.items) {
+                    for (var i = 0; i < settings.items.length; i++) {
+                        var $li = $('<li> <div class="btn action-item">' + settings.items[i] + '</div> </li>');
                         $firstUl.append($li);
                     }
                 }
-                that.content=$content;
+                that.content = $content;
             }
 
 
         },
         _showHtml: function () {
-            var actionSheet=$(this.content).appendTo($('body'));
-            $(this.content).css('transform','translate3d(0, 100%, 0)');
-            this.actionSheet=actionSheet;
+            var actionSheet = $(this.content).appendTo($('body'));
+            $(this.content).css('transform', 'translate3d(0, 100%, 0)');
+            this.actionSheet = actionSheet;
             this._attachEvent();
         },
         _attachEvent: function () {
-            var that=this;
-            that.actionSheet.on('click','.action-item', function (e) {
+            var that = this;
+            that.actionSheet.on('click', '.action-item', function (e) {
                 e.preventDefault();
-                var index=$('.um-actionsheet .action-item').index($(this));
-                var callback=that.settings.callbacks[index];
-                setTimeout(function() {
+                var index = $('.um-actionsheet .action-item').index($(this));
+                var callback = that.settings.callbacks[index];
+                setTimeout(function () {
                     callback();
                 }, 100);
                 that.close();
-                setTimeout(function () {
-                    that.actionSheet.remove();
-                },1000)
             });
-            that.actionSheet.on('click','.action-cancle',function(){
+            that.actionSheet.on('click', '.action-cancle', function () {
                 that.close();
-                setTimeout(function () {
-                    that.actionSheet.remove();
-                },1000)
             })
         },
 
         close: function () {
-            var that=this;
+            var that = this;
             if (!this.$target) {
                 // 关闭所有
                 $("um-" + this.type).removeClass("active");
                 setTimeout(function () {
-                    $("um-" + this.type).css('transform','translate3d(0, 100%, 0)');
+                    $("um-" + this.type).css('transform', 'translate3d(0, 100%, 0)');
                     that.$overlay.remove();
-                },300)
+                }, 300)
             } else {
                 this.$target.removeClass("active");
-                setTimeout(function () {
-                    that.$target.css('transform','translate3d(0, 100%, 0)');
-                    that.$overlay.remove();
-                },300)
+                if (this.direction == 'left' || this.direction == 'leftCover') {
+                    that.$target.css('transform', 'translate3d(-100%, 0, 0)');
+                } else if (this.direction == 'right' || this.direction == 'rightCover') {
+                    that.$target.css('transform', 'translate3d(100%, 0, 0)');
+                } else {
+                    that.$target.css('transform', 'translate3d(0, 100%, 0)');
+                }
+                if (this.type == 'actionsheet') {
+                    setTimeout(function () {
+                        that.actionSheet.remove();
+                    }, 1000)
+                }
+                that.$overlay.remove();
             }
 
 
@@ -1410,9 +1504,9 @@ $("textarea.form-control").elastic();
         }
     }
 
-    UM.actionsheet= function (options) {
-        var type='actionsheet';
-        return new activeDom(type,options)
+    UM.actionsheet = function (options) {
+        var type = 'actionsheet';
+        return new activeDom(type, options)
     };
     //UM.actionsheet = new activeDom("actionsheet");
     UM.share = new activeDom("share");
@@ -1448,12 +1542,12 @@ $(document).ready(function(){
 });
 */
 $(document).on("click", ".um-tabbar li,.um-footerbar-item",function(){
-	$(this).addClass("active").siblings().removeClass("active");
+    $(this).addClass("active").siblings().removeClass("active");
 })
 // 解决IOS和低端安卓设备 checkbox和radio bug
 $("label").on("change", function(e){
-	$(this).addClass("um-label-change").siblings("label").addClass("um-label-change");
-	setTimeout(function(){
-		$(this).removeClass("um-label-change").siblings("label").removeClass("um-label-change");
-	}.bind(this), 100);
+    $(this).addClass("um-label-change").siblings("label").addClass("um-label-change");
+    setTimeout(function(){
+        $(this).removeClass("um-label-change").siblings("label").removeClass("um-label-change");
+    }.bind(this), 100);
 })

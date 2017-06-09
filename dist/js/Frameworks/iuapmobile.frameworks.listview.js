@@ -46,7 +46,11 @@
 			this._moveY = 0; //手指在列表上滑动的纵向位移		
 			this._offsetY = 0; //手指在列表上滑动的纵向距离
 			this._longTapEvent = null; //手指在列表上的长按定时器
-	
+			
+			//
+			this.pulldownTime = null;
+			this.pullUpTime = null;
+			
 			this.init(options);
 		};
 
@@ -99,6 +103,7 @@
 					// 加载上方
 					if (self.config.pullDownEnable && self._scrollTop <= 0 && self._pullDirection == 'down') {
 						e.preventDefault();
+						clearTimeout(this.pulldownTime);
 						if (!self.config.insertDOM) {
 							self.$element.prepend('<div class="' + self.opts.domUp.domClass + '"></div>');
 							self.config.insertDOM = true;
@@ -128,6 +133,7 @@
 					// 加载下方
 					if (self.config.pullUpEnable && self._contentHeight <= (self._viewHeight + self._scrollTop) && self._pullDirection == 'up') {
 						e.preventDefault();
+						clearTimeout(this.pullUpTime);
 						if (!self.config.insertDOM) {
 							self.$element.append('<div class="' + self.opts.domDown.domClass + '"></div>');
 							self.config.insertDOM = true;
@@ -211,21 +217,21 @@
 					if (self.config.pullDownEnable && self._pullDirection == 'down') {
 						if (!!self._$domResult) {
 							self._$domResult.css({
-								'height' : 50
+								'height' : 40
 							})
 						}
 						this.isPulling = true;
-						setTimeout(function() {
+						this.pulldownTime = setTimeout(function() {
 							self._events.trigger("pullDown", self, {});
 						}, 1000);
 					} else if (self.config.pullUpEnable && self._pullDirection == 'up') {
 						if (!!self._$domResult) {
 							self._$domResult.css({
-								'height' : 50
+								'height' : 40
 							})
 						}
 						this.isPulling = true;
-						setTimeout(function() {
+						this.pullUpTime = setTimeout(function() {
 							self._events.trigger("pullUp", self, {});
 						}, 1000);
 					}
@@ -246,17 +252,17 @@
 					domClass : 'um-listview-up',
 					domRefresh : '<div class="um-listview-refresh">↓下拉刷新</div>',
 					domUpdate : '<div class="um-listview-update">↑释放更新</div>',
-					domLoad : '<div class="um-listview-load"><span class="pullLoading"></span>加载中...</div>'
+					domLoad : '<div class="um-listview-load"><div class="um-listview-loader"><span></span><span></span><span></span><span></span></div><div class="pullDownLabel">Loading...</div></div>'
 				},
 				domDown : {
 					domClass : 'um-listview-down',
 					domRefresh : '<div class="um-listview-refresh">↑上拉加载更多</div>',
 					domUpdate : '<div class="um-listview-update">↓释放加载</div>',
-					domLoad : '<div class="um-listview-load"><span class="pullLoading"></span>加载中...</div>'
+					domLoad : '<div class="um-listview-load"><div class="um-listview-loader"><span></span><span></span><span></span><span></span></div><div class="pullDownLabel">Loading...</div></div>'
 				},
 				hasItemMenu : true,
 				showLoadingBar : true,
-				pullDistance : 50, // 拉动距离,单位为px
+				pullDistance : 40, // 拉动距离,单位为px
 				tapHoldTime : 500, //长按事件多久之后触发，单位为ms
 				itemDeleteAnimateTime : 500
 			}, options);
@@ -275,9 +281,14 @@
 					}
 
 				}
-
+				var rowIndex1 = $(e.target).parents("li").index();
+				var elem2=$(e.target).parents("li");
+				var args2 = {
+					rowIndex : rowIndex1,
+					$target : elem2
+				}
 				self.config.tapHoldEnable && (self._longTapEvent = setTimeout(function() {
-					self._events.trigger("longTap", self, {});
+					self._events.trigger("longTap", self, args2);
 				}, self.opts.tapHoldTime));
 				if (!self.isPulling){
 					self._touchMethods.fnTouches(e);
@@ -401,7 +412,8 @@
 			if (this._pullDirection == 'down') {
 				this.$element.scrollTop(0);
 			} else if (this._pullDirection == 'up') {
-				this.$element.scrollTop(this.$element[0].scrollHeight);
+				//this.$element.scrollTop(this.$element[0].scrollHeight);
+				this.$element.scrollTop(this._scrollTop+40);
 			}
 			//this.config.isLoading = false;
 			this.config.insertDOM = false;
